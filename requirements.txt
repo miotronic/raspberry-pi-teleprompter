@@ -1,0 +1,5 @@
+# Install via apt, not pip:
+# sudo apt install python3-pygame python3-evdev fonts-dejavu-core bluetooth bluez -y
+
+pygame
+evdev

@@ -36,6 +36,12 @@ The 8" display (174mm wide) fits the Ulanzi RT02 holder (180mm) almost perfectly
 
 ---
 
+## Demo
+
+[![Demo Video](https://img.youtube.com/vi/aEs8yM83L3M/maxresdefault.jpg)](https://www.youtube.com/shorts/aEs8yM83L3M)
+
+---
+
 ## Hardware Notes
 
 **RPi Zero 2 W** — quad-core ARMv8, 512MB RAM, built-in WiFi + Bluetooth 4.2. The app uses pre-rendering (all text drawn to one large surface at startup) so scrolling is smooth even on this compact hardware.

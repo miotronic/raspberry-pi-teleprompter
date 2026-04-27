@@ -45,7 +45,7 @@ The 8" display (174mm wide) fits the Ulanzi RT02 holder (180mm) almost perfectly
 
 Upload and manage scripts directly from your browser — no WinSCP, no SSH, no cables needed.
 
-Access via: `http://teleprompter.local:5000`
+Access via: `http://teleprompter.local:5000` or `http://[ip_address]:5000`
 
 Features:
 - Upload `.txt` script files via drag & drop or file picker

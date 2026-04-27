@@ -13,7 +13,7 @@ A lightweight, dedicated teleprompter built on a Raspberry Pi Zero 2 W, running 
 | **Display (alt)** | 7" LCD 1024x600, 165x100mm | [AliExpress](https://s.click.aliexpress.com/e/_c32YJ80L) |
 | **Display controller** | Mini HDMI driver board, 5V via Micro USB | included with display |
 | **Teleprompter frame** | Ulanzi RT02 with beam splitter glass | [AliExpress](https://s.click.aliexpress.com/e/_c3a2Kg9z) |
-| **MiniHDMi and Flexible Flat Cable** | Connector C1 x 2 and Flexible Flat Cable for Raspberry Pi Zero 2W Mini HDMI | [AliExpress]https://s.click.aliexpress.com/e/_c40usoHp |
+| **MiniHDMi and Flexible Flat Cable** | Connector C1 x 2 and Flexible Flat Cable for Raspberry Pi Zero 2W Mini HDMI | [AliExpress](https://s.click.aliexpress.com/e/_c40usoHp) |
 | **Input** | Bluetooth keyboard | |
 | **OS** | Raspberry Pi OS Lite 64-bit | |
 

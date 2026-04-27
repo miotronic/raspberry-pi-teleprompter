@@ -18,8 +18,8 @@ import json
 # Common sizes: 800x480 (7"), 1024x600 (7"), 1024x768 (8"), 1920x1080 (Full HD)
 # Current: 8 inch 1024x768 LCD with mini HDMI controller board
 # =============================================================================
-SCREEN_WIDTH  = 1024
-SCREEN_HEIGHT = 768
+SCREEN_WIDTH  = 800
+SCREEN_HEIGHT = 480
 
 # =============================================================================
 # FONT SIZES
@@ -417,7 +417,6 @@ def load_and_run(screen, filename):
         # Crop full screen frame
         # frame = big_surface.subsurface((0, scroll_y, SCREEN_WIDTH, SCREEN_HEIGHT)).copy()
         frame = big_surface.subsurface((0, scroll_y, SCREEN_WIDTH, int(SCREEN_HEIGHT * 0.7))).copy()
-
         # Apply fade only at the top -- text fades out as it reaches the top of the screen.
         # FADE_ZONE controls how many pixels fade (top 40% of screen height).
         # Increase for more gradual fade, decrease for sharper transition.

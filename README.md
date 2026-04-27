@@ -2,6 +2,10 @@
 
 A lightweight, dedicated teleprompter built on a Raspberry Pi Zero 2 W, running a custom Python/Pygame application. Designed to be cheap, compact, and reliable — a single-purpose device that boots straight into the app and does nothing else.
 
+## Demo
+
+[![Demo Video](https://img.youtube.com/vi/aEs8yM83L3M/maxresdefault.jpg)](https://www.youtube.com/shorts/aEs8yM83L3M)
+
 ---
 
 ## My Setup
@@ -13,17 +17,17 @@ A lightweight, dedicated teleprompter built on a Raspberry Pi Zero 2 W, running 
 | **Display (alt)** | 7" LCD 1024x600, 165x100mm | [AliExpress](https://s.click.aliexpress.com/e/_c32YJ80L) |
 | **Display controller** | Mini HDMI driver board, 5V via Micro USB | included with display |
 | **Teleprompter frame** | Ulanzi RT02 with beam splitter glass | [AliExpress](https://s.click.aliexpress.com/e/_c3a2Kg9z) |
-| **MiniHDMi and Flexible Flat Cable** | Connector C1 x 2 and Flexible Flat Cable for Raspberry Pi Zero 2W Mini HDMI | [AliExpress](https://s.click.aliexpress.com/e/_c40usoHp) |
+| **Mini HDMI cable** | Connector C1 x2 + Flexible Flat Cable for RPi Zero 2W | [AliExpress](https://s.click.aliexpress.com/e/_c40usoHp) |
 | **Input** | Bluetooth keyboard | |
 | **OS** | Raspberry Pi OS Lite 64-bit | |
 
-The 8" display (174mm wide) fits the Ulanzi RT02 holder (180mm) almost perfectly, covering the full beam splitter glass area with just 3mm clearance on each side. The 7" display also fits well with more clearance. The whole unit is powered independently — no phone battery anxiety, no notifications, no distractions. Scripts are managed wirelessly over WiFi via WinSCP.
+The 8" display (174mm wide) fits the Ulanzi RT02 holder (180mm) almost perfectly, covering the full beam splitter glass area with just 3mm clearance on each side. The 7" display also fits well with more clearance. The whole unit is powered independently — no phone battery anxiety, no notifications, no distractions.
 
 ---
 
 ## Features
 
-- Auto-boots straight into the script selection menu (systemd service)
+- Auto-boots straight into the script selection menu
 - **White text** for speech, **red text** for stage directions in `[ ]` brackets
 - Adjustable scroll speed (1–10)
 - Play/Pause, rewind, speed control
@@ -33,12 +37,27 @@ The 8" display (174mm wide) fits the Ulanzi RT02 holder (180mm) almost perfectly
 - Language preference saved to `config.json`
 - Shutdown option directly from the menu
 - Exit to terminal option for maintenance
+- **Web interface** for wireless script management — no WinSCP needed
 
 ---
 
-## Demo
+## Web Interface
 
-[![Demo Video](https://img.youtube.com/vi/aEs8yM83L3M/maxresdefault.jpg)](https://www.youtube.com/shorts/aEs8yM83L3M)
+Upload and manage scripts directly from your browser — no WinSCP, no SSH, no cables needed.
+
+Access via: `http://teleprompter.local:5000`
+
+Features:
+- Upload `.txt` script files via drag & drop or file picker
+- Delete scripts
+- Preview script content with color-coded stage directions
+- Works from any device on the same WiFi network (phone, tablet, PC)
+
+Install Flask before first use:
+
+```bash
+sudo apt install python3-flask -y
+```
 
 ---
 
@@ -61,24 +80,24 @@ Use Raspberry Pi Imager:
 - **OS:** Raspberry Pi OS Lite (64-bit)
 - **Edit Settings:**
   - Hostname: `teleprompter`
-  - Username: `pi`
+  - Username: `zero`
   - Password: your password
   - WiFi SSID + password
   - Enable SSH (password authentication)
 
 ### 2. First boot and SSH
 
-Wait 2–3 minutes for first boot (Zero is slow), then:
+Wait 2–3 minutes for first boot, then:
 
 ```bash
-ssh pi@teleprompter.local
+ssh zero@teleprompter.local
 sudo apt update && sudo apt upgrade -y
 ```
 
 ### 3. Install dependencies
 
 ```bash
-sudo apt install python3-pygame python3-evdev fonts-dejavu-core bluetooth bluez -y
+sudo apt install python3-pygame python3-evdev fonts-dejavu-core bluetooth bluez python3-flask -y
 sudo systemctl enable bluetooth
 sudo systemctl start bluetooth
 ```
@@ -88,14 +107,16 @@ sudo systemctl start bluetooth
 ```bash
 mkdir ~/teleprompter
 mkdir ~/teleprompter/scripts
-echo 'pi ALL=(ALL) NOPASSWD: /sbin/poweroff' | sudo tee /etc/sudoers.d/teleprompter
+echo 'zero ALL=(ALL) NOPASSWD: /sbin/poweroff' | sudo tee /etc/sudoers.d/teleprompter
 ```
 
 ### 5. Upload files
 
 Use WinSCP (SFTP, host: `teleprompter.local`) to upload:
-- `teleprompter.py` → `/home/pi/teleprompter/`
-- Your `.txt` script files → `/home/pi/teleprompter/scripts/`
+- `teleprompter.py` → `/home/zero/teleprompter/`
+- `webserver.py` → `/home/zero/teleprompter/`
+- `start.sh` → `/home/zero/teleprompter/`
+- Your `.txt` script files → `/home/zero/teleprompter/scripts/`
 
 > **Important:** Always use WinSCP for uploading Python files. Copy-pasting code through the terminal can corrupt formatting.
 
@@ -109,18 +130,12 @@ sudo raspi-config
 ### 7. Autostart on boot
 
 ```bash
-echo 'if [ "$(tty)" = "/dev/tty1" ]; then /home/pi/teleprompter/start.sh; fi' >> ~/.profile
+echo 'if [ "$(tty)" = "/dev/tty1" ]; then /home/zero/teleprompter/start.sh; fi' >> ~/.profile
 ```
 
-Create `start.sh`:
+Make start.sh executable:
 
 ```bash
-cat > ~/teleprompter/start.sh << 'EOF'
-#!/bin/bash
-export SDL_VIDEODRIVER=kmsdrm
-export SDL_AUDIODRIVER=dummy
-exec python3 /home/pi/teleprompter/teleprompter.py >> /home/pi/teleprompter/start.log 2>&1
-EOF
 chmod +x ~/teleprompter/start.sh
 ```
 
@@ -129,6 +144,10 @@ chmod +x ~/teleprompter/start.sh
 ```bash
 sudo reboot
 ```
+
+After reboot:
+- Teleprompter app appears on display automatically
+- Web interface available at `http://teleprompter.local:5000`
 
 ---
 
@@ -204,6 +223,8 @@ This will be published as a separate project and linked here when ready.
 
 ---
 
+## Display Configuration (`/boot/config.txt`)
+
 If the display does not show correctly, add to `/boot/config.txt`:
 
 ```ini
@@ -219,8 +240,6 @@ hdmi_cvt=1024 768 60 6 0 0 0
 disable_overscan=1
 ```
 
-Adjust `hdmi_cvt` values if you use a different display resolution.
-
 ---
 
 ## Beam Splitter Flip
@@ -234,8 +253,6 @@ pygame.transform.flip(surface, False, True)   # vertical flip
 pygame.transform.flip(surface, True, True)    # both
 ```
 
-Adjust to match your teleprompter frame orientation.
-
 ---
 
 ## Troubleshooting
@@ -245,14 +262,16 @@ Adjust to match your teleprompter frame orientation.
 cat ~/teleprompter/start.log
 ```
 
+**Permission denied on start.sh:**
+```bash
+chmod +x ~/teleprompter/start.sh
+```
+
 **`fbcon not available` error:**
 Use `kmsdrm` — do not use `fbcon` or `x11` on RPi Zero.
 
 **Slow or stuttering scroll:**
 Make sure the script uses pre-rendering (`big_surface`). Without it, the Zero CPU cannot render text fast enough.
-
-**`fc-list` timeout warning:**
-Normal on Zero — resolved by using `pygame.Font()` with a direct font path instead of `SysFont()`.
 
 **Bluetooth not ready:**
 ```bash
@@ -266,6 +285,12 @@ Use `.profile`, not `.bashrc` or `.bash_profile`.
 cat ~/.profile   # check the line is there at the bottom
 ```
 
+**Web interface not accessible:**
+```bash
+sudo apt install python3-flask -y
+sudo reboot
+```
+
 ---
 
 ## Project Structure
@@ -273,9 +298,11 @@ cat ~/.profile   # check the line is there at the bottom
 ```
 teleprompter/
 ├── teleprompter.py        # Main application
+├── webserver.py           # Web interface for script management
 ├── config.json            # Saved language preference
-├── start.sh               # Startup script
+├── start.sh               # Startup script (launches both apps)
 ├── start.log              # Runtime log (auto-generated)
+├── webserver.log          # Web server log (auto-generated)
 └── scripts/
     ├── episode_01.txt
     ├── episode_02.txt
@@ -284,11 +311,15 @@ teleprompter/
 
 ---
 
+## Support the Project
+
+If this saved you hours of frustration, consider buying me a coffee ☕
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/miotronic)
+
+---
+
 ## License
 
 MIT License. Use freely, modify freely, share freely.
 
-## Support the project
-If this saved you hours of frustration, consider buying me a coffee ☕
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/miotronic)
